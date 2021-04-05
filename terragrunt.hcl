@@ -15,7 +15,7 @@ generate "providers" {
   if_exists = "overwrite_terragrunt"
   contents = <<EOF
 provider "github" {
-  organization = var.org_id
+  organization = "UPDATE_GITHUB_ORG"
 }
 EOF
 }
