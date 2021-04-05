@@ -20,7 +20,6 @@ steps:
 
 - id: 'Terragrunt Init'
   name: 'eu.gcr.io/${PROJECT_ID}/terragrunt'
-  # args: ['run-all', 'init']
   entrypoint: 'bash'
   args:
   - '-c'

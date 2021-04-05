@@ -20,7 +20,13 @@ steps:
 
 - id: 'Terragrunt Init'
   name: 'eu.gcr.io/${PROJECT_ID}/terragrunt'
-  args: ['run-all', 'init']
+  entrypoint: 'bash'
+  args:
+  - '-c'
+  - |
+     sed -i -e 's/UPDATE_BUCKET/${_STATE_BUCKET}/g' terragrunt.hcl
+     sed -i -e 's/UPDATE_GITHUB_ORG/${_REPO_OWNER_SECRET}/g' terragrunt.hcl
+     terragrunt run-all init 
   volumes:
   - name: 'ssh'
     path: /root/.ssh
@@ -30,7 +36,7 @@ steps:
   args: ['cp', 'gs://${_ARTIFACT_BUCKET_NAME}/github-terraform/plan/$_DIR/$_PLAN_FILE', '$_DIR/$_PLAN_FILE']
 
 - id: 'Terraform Apply'
-  name: 'gcr.io/${PROJECT_ID}/terragrunt'
+  name: 'eu.gcr.io/${PROJECT_ID}/terragrunt'
   entrypoint: 'bash'
   secretEnv: ['GITHUB_TOKEN']
   args:
@@ -43,7 +49,7 @@ steps:
 
 availableSecrets:
   secretManager:
-  - versionName: ${_DEPLOY_KEY_PUBLIC}
+  - versionName: ${_DEPLOY_KEY_PRIVATE}
     env: 'SSH_KEY'
   - versionName: ${_GITHUB_TOKEN_SECRET}
     env: 'GITHUB_TOKEN'
