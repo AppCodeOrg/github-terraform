@@ -20,12 +20,13 @@ steps:
 
 - id: 'Terragrunt Init'
   name: 'eu.gcr.io/${PROJECT_ID}/terragrunt'
+  secretEnv: ['GITHUB_ORG']
   entrypoint: 'bash'
   args:
   - '-c'
   - |
      sed -i -e 's/UPDATE_BUCKET/${_STATE_BUCKET}/g' terragrunt.hcl
-     sed -i -e 's/UPDATE_GITHUB_ORG/${_REPO_OWNER_SECRET}/g' terragrunt.hcl
+     sed -i -e 's/UPDATE_GITHUB_ORG/${GITHUB_ORG}/g' terragrunt.hcl
      terragrunt run-all init 
   volumes:
   - name: 'ssh'
@@ -53,4 +54,5 @@ availableSecrets:
     env: 'SSH_KEY'
   - versionName: ${_GITHUB_TOKEN_SECRET}
     env: 'GITHUB_TOKEN'
-
+  - versionName: ${_REPO_OWNER_SECRET}
+    env: 'GITHUB_ORG'  
