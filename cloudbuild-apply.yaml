@@ -1,0 +1,50 @@
+steps:
+
+- id: 'configure git for ssh access'
+  name: 'gcr.io/cloud-builders/git'
+  secretEnv: ['SSH_KEY']
+  entrypoint: 'bash'
+  args:
+  - '-c'
+  - |
+    echo "$$SSH_KEY" >> /root/.ssh/id_github
+    chmod 600 /root/.ssh/id_github
+    cat <<EOF >/root/.ssh/config
+    Hostname github.com
+    IdentityFile /root/.ssh/id_github
+    EOF
+    ssh-keyscan -t rsa github.com > /root/.ssh/known_hosts
+  volumes:
+  - name: 'ssh'
+    path: /root/.ssh
+
+- id: 'Terragrunt Init'
+  name: 'eu.gcr.io/${PROJECT_ID}/terragrunt'
+  args: ['run-all', 'init']
+  volumes:
+  - name: 'ssh'
+    path: /root/.ssh
+
+- id: 'Get Approved Plan'
+  name: 'gcr.io/cloud-builders/gsutil'
+  args: ['cp', 'gs://${_ARTIFACT_BUCKET_NAME}/github-terraform/plan/$_DIR/$_PLAN_FILE', '$_DIR/$_PLAN_FILE']
+
+- id: 'Terraform Apply'
+  name: 'gcr.io/${PROJECT_ID}/terragrunt'
+  entrypoint: 'bash'
+  secretEnv: ['GITHUB_TOKEN']
+  args:
+  - '-c'
+  - |
+    cd $_DIR
+    terragrunt -version 
+    terraform version
+    terraform apply -input=false -auto-approve $_PLAN_FILE
+
+availableSecrets:
+  secretManager:
+  - versionName: ${_DEPLOY_KEY_PUBLIC}
+    env: 'SSH_KEY'
+  - versionName: ${_GITHUB_TOKEN_SECRET}
+    env: 'GITHUB_TOKEN'
+
