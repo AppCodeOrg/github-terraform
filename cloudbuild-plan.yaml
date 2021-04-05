@@ -1,0 +1,53 @@
+steps:
+
+- id: 'configure git for ssh access'
+  name: 'gcr.io/cloud-builders/git'
+  secretEnv: ['SSH_KEY']
+  entrypoint: 'bash'
+  args:
+  - '-c'
+  - |
+    echo "$$SSH_KEY" >> /root/.ssh/id_github
+    chmod 600 /root/.ssh/id_github
+    cat <<EOF >/root/.ssh/config
+    Hostname github.com
+    IdentityFile /root/.ssh/id_github
+    EOF
+    ssh-keyscan -t rsa github.com > /root/.ssh/known_hosts
+  volumes:
+  - name: 'ssh'
+    path: /root/.ssh
+
+- id: 'Terragrunt Init'
+  name: 'eu.gcr.io/${PROJECT_ID}/terragrunt'
+  # args: ['run-all', 'init']
+  args:
+  - '-c'
+  - |
+     sed -i -e 's/UPDATE_BUCKET/${_STATE_BUCKET}/g' terragrunt.hcl
+     terragrunt run-all init  
+  volumes:
+  - name: 'ssh'
+    path: /root/.ssh
+
+- id: 'Terraform Plan'
+  name: 'gcr.io/${PROJECT_ID}/terragrunt'
+  entrypoint: 'bash'
+  secretEnv: ['GITHUB_TOKEN']
+  args:
+  - '-c'
+  - |
+    cd $_DIR
+    terraform plan -input=false -out $_PLAN_FILE
+
+availableSecrets:
+  secretManager:
+  - versionName: ${_DEPLOY_KEY_PUBLIC}
+    env: 'SSH_KEY'
+  - versionName: ${_GITHUB_TOKEN_SECRET}
+    env: 'GITHUB_TOKEN'
+
+artifacts:
+  objects:
+    location: 'gs://${_ARTIFACT_BUCKET_NAME}/github-terraform/plan/$_DIR/'
+    paths: ['$_DIR/$_PLAN_FILE']
