@@ -43,7 +43,7 @@ steps:
 
 availableSecrets:
   secretManager:
-  - versionName: ${_DEPLOY_KEY_PUBLIC}
+  - versionName: ${_DEPLOY_KEY_PRIVATE}
     env: 'SSH_KEY'
   - versionName: ${_GITHUB_TOKEN_SECRET}
     env: 'GITHUB_TOKEN'
