@@ -32,7 +32,7 @@ steps:
     path: /root/.ssh
 
 - id: 'Terraform Plan'
-  name: 'gcr.io/${PROJECT_ID}/terragrunt'
+  name: 'eu.gcr.io/${PROJECT_ID}/terragrunt'
   entrypoint: 'bash'
   secretEnv: ['GITHUB_TOKEN']
   args:
