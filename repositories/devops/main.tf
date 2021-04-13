@@ -33,3 +33,17 @@ module "docker-base-nginx" {
   teams_repository_memberships = local.teams_repository_memberships
 
 }
+
+module "docker-base-magento" {
+  source = "git@github.com:AppCodeOrg/terraform-modules.git//github/repository?ref=0.0.3"
+
+  teams = local.teams
+
+  name        = "docker-base-magento"
+  description = "Base docker image for Magento"
+
+  enable_branch_protection = false
+
+  teams_repository_memberships = local.teams_repository_memberships
+
+}
