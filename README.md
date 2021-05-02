@@ -1,18 +1,19 @@
 # github-terraform
-Github Terraform Recipes
 
-# github-terraform
-Commit Message to Add/Remove User
-users-john-doe-membership-add, users-jane-doe-membership-remove
+Terraform code to create Repositories, Users, Teams in Github.
 
-Commit Message to Add Team
-teams-frontend-add
+The repository uses unique commit messages to generate `terraform plan` files which are then used to do a `terraform apply`.
 
-Commit Message to Add Repository
-repositories/devops-gcp-tf-modules-create
+Please follow the below commit message guidelines to provide proper commit message:
 
-export DIR=`echo ${_COMMIT_MSG%%-*}`
+- Make sure you provide the same commit message everytime to commit wihtin a PR, of if you cleanup commits in the PR.
 
-gcloud builds submit --config=cloudbuild-plan.yaml --substitutions=_COMMIT_MESSAGE=users-john-doe-membership-add,_DIR=users,_ARTIFACT_BUCKET_NAME=appcode-cloudbuild-artifacts-5790,_PLAN_FILE=john-doe-membership-add
+- Make sure your commit message has no spaces, use an `_` instead of spaces.
 
-gcloud builds submit --config=cloudbuild-apply.yaml --substitutions=_COMMIT_MESSAGE=users-john-doe-membership-add,_DIR=users,_ARTIFACT_BUCKET_NAME=appcode-cloudbuild-artifacts-5790,_PLAN_FILE=john-doe-membership-add
+- You can name the feature branch whatever you like, that doesn't affect the processing.
+
+- Commit Message to Add/Remove User: Start message with `users-` Eg. users-Jane_Doe_add, users-John_Doe_remove
+
+- Commit Message to Add Team: Start message with `teams-` Eg. teams-devops_add, teams-techops_remove
+
+- Commit Message to Add Repository: Start message with `repositories/devops-` if you want to add a repository in devops project. Follow the same convention for other projects/ template.
