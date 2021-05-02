@@ -3,7 +3,7 @@ locals {
 }
 
 resource "github_membership" "mayank-aggarwal-org-member" {
-  username = "mayank-aggarwal-appcode"
+  username = "mayank-aggarwal-app"
   role     = "admin"
 }
 
