@@ -17,3 +17,5 @@ Please follow the below commit message guidelines to provide proper commit messa
 - Commit Message to Add Team: Start message with `teams-` Eg. teams-devops_add, teams-techops_remove
 
 - Commit Message to Add Repository: Start message with `repositories/devops-` if you want to add a repository in devops project. Follow the same convention for other projects/ template.
+
+Note:
